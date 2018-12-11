@@ -4,7 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "gulp clean",
+    "sass:watch": "gulp sass:watch",
+    "watch": "gulp watch",
+    "predev": "npm run clean",
+    "dev": "gulp dev",
+    "serve": "npm run dev && gulp serve",
+    "prebuild": "npm run clean",
+    "build": "gulp"
   },
   "author": "",
   "license": "ISC",
@@ -18,8 +26,10 @@
     "gulp-imagemin": "^5.0.3",
     "gulp-minify-css": "^1.2.4",
     "gulp-rename": "^1.4.0",
-    "gulp-ruby-sass": "^4.0.0",
-    "gulp-uglify": "^3.0.1"
+    "gulp-sass": "^4.0.2",
+    "gulp-sourcemaps": "^2.6.4",
+    "gulp-uglify": "^3.0.1",
+    "node-sass": "^4.11.0"
   },
   "dependencies": {}
 }

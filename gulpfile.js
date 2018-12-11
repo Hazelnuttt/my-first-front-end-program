@@ -1,81 +1,150 @@
-var gulp = require('gulp'),
-    sass = require('gulp-ruby-sass'),
-    minifycss = require('gulp-minify-css'),
-    uglify = require('gulp-uglify'),
-    imagemin = require('gulp-imagemin'),
-    rename = require('gulp-rename'),
-    concat = require('gulp-concat'),
-    del = require('del'),
-    connect = require('gulp-connect'),
-    htmlmin = require('gulp-htmlmin'),
-    autoprefixer = require('gulp-autoprefixer');
+const gulp = require('gulp');
+const minifycss = require('gulp-minify-css');
+const uglify = require('gulp-uglify');
+const imagemin = require('gulp-imagemin');
+const rename = require('gulp-rename');
+const concat = require('gulp-concat');
+const del = require('del');
+const connect = require('gulp-connect');
+const htmlmin = require('gulp-htmlmin');
+const autoprefixer = require('gulp-autoprefixer');
+const sourcemaps = require('gulp-sourcemaps');
+const sass = require('gulp-sass');
+sass.compiler = require('node-sass');
 
-//sass
-gulp.task('sass', function(cb) {
-  setTimeout(function(){
-    sass('./public/styles/**/*.scss')
-    .on('error',sass.logError)
-    .pipe(gulp.dest('./public/styles'))
-    cb();
-  });
+const path = {
+  sass: './src/styles/**/*.scss',
+  css: './src/styles/**/*.css',
+  js: './src/scripts/**/*.js',
+  images: './src/images/**/*',
+  html: './src/**/*.html'
+}
 
+// Clean
+gulp.task('clean', function () {
+  return del(['./dist']);
 });
-// Styles
-gulp.task('styles',['sass'], function() {
-  return gulp.src('./public/styles/**/*.css')
-    .pipe(autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android>=4'))
-    .pipe(gulp.dest('./public/dist/styles'))
-    .pipe(rename({suffix: '.min'}))
-    .pipe(minifycss())
-    .pipe(gulp.dest('./public/dist/styles'))
-});
-// Scripts
-gulp.task('scripts', function() {
-  return gulp.src('./public/scripts/**/*.js')
-    .pipe(concat('main.js'))
-    .pipe(gulp.dest('./public/dist/js'))
-    .pipe(rename({suffix: '.min'}))
-    .pipe(uglify())
-    .pipe(gulp.dest('./public/dist/js'))
-});
-// Images
-gulp.task('images', function() {
-  return gulp.src('./public/images/**/*')
-    .pipe(imagemin({ optimizationLevel: 3, progressive: true, interlaced: true,multipass: true }))
-    .pipe(gulp.dest('./public/dist/img'))
-});
-// Html
-gulp.task('html',function(){
-  return gulp.src('./public/**/*.html')
-    .pipe(htmlmin({
-      removeComments: true,//清除HTML注释
-      collapseWhitespace: true,//压缩HTML
-      collapseBooleanAttributes: true,//省略布尔属性的值 <input checked="true"/> ==> <input />
-      removeEmptyAttributes: true,//删除所有空格作属性值 <input id="" /> ==> <input />
-      removeScriptTypeAttributes: true,//删除<script>的type="text/javascript"
-      removeStyleLinkTypeAttributes: true,//删除<style>和<link>的type="text/css"
-      minifyJS: true,//压缩页面JS
-      minifyCSS: true,//压缩页面CSS
-    }))
-    .pipe(gulp.dest('./public/dist/html'))
-});
-// Default task
-gulp.task('default', function() {
-  gulp.start('styles', 'scripts','html','images');
-});
-// Watch
-gulp.task('watch', function() {
-  gulp.watch('./public/styles/**/*.scss', ['sass']);
-});
- //connect
- gulp.task('serve',function(){
-   connect.server({
-     root: 'public',
-     livereload: true
-   });
-   gulp.watch('./public/**/*.*',['reload']);
- });
- gulp.task('reload',function(){
-   gulp.src('./public/hello.html')
+
+// Sass
+gulp.task('sass', function () {
+  return gulp.src(path.sass)
+    .pipe(sourcemaps.init())
+    .pipe(sass().on('error', sass.logError))
+    .pipe(sourcemaps.write('./maps'))
+    .pipe(gulp.dest('./dist/styles'))
     .pipe(connect.reload());
- });
+});
+
+gulp.task('sass:watch', function () {
+  gulp.watch(path.sass, ['sass']);
+});
+
+gulp.task('sass:build', function () {
+  return gulp.src(path.sass)
+    .pipe(sass.sync({
+      outputStyle: 'compressed'
+    }).on('error', sass.logError))
+    .pipe(autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android>=4'))
+    .pipe(rename({
+      suffix: '.min'
+    }))
+    .pipe(gulp.dest('./dist/styles'));
+});
+
+// Styles
+gulp.task('styles', function () {
+  return gulp.src(path.css)
+    .pipe(gulp.dest('./dist/styles'))
+    .pipe(connect.reload());
+});
+
+gulp.task('styles:build', function () {
+  return gulp.src(path.css)
+    .pipe(autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android>=4'))
+    .pipe(minifycss())
+    .pipe(rename({
+      suffix: '.min'
+    }))
+    .pipe(gulp.dest('./dist/styles'));
+});
+
+// Scripts
+gulp.task('scripts', function () {
+  return gulp.src(path.js)
+    .pipe(concat('main.js'))
+    .pipe(gulp.dest('./dist/scripts'))
+    .pipe(connect.reload());
+});
+
+gulp.task('scripts:build', function () {
+  return gulp.src(path.js)
+    .pipe(concat('main.js'))
+    .pipe(uglify())
+    .pipe(rename({
+      suffix: '.min'
+    }))
+    .pipe(gulp.dest('./dist/scripts'));
+});
+
+// Images
+gulp.task('images', function () {
+  return gulp.src(path.images)
+    .pipe(gulp.dest('./dist/images'))
+    .pipe(connect.reload());
+});
+
+gulp.task('images:build', function () {
+  return gulp.src(path.images)
+    .pipe(imagemin({
+      optimizationLevel: 3,
+      progressive: true,
+      interlaced: true,
+      multipass: true
+    }))
+    .pipe(gulp.dest('./dist/images'));
+});
+
+// Html
+gulp.task('html', function () {
+  return gulp.src(path.html)
+    .pipe(gulp.dest('./dist'))
+    .pipe(connect.reload());
+});
+
+gulp.task('html:build', function () {
+  return gulp.src(path.html)
+    .pipe(htmlmin({
+      removeComments: true, //清除HTML注释
+      collapseWhitespace: true, //压缩HTML
+      collapseBooleanAttributes: true, //省略布尔属性的值 <input checked="true"/> ==> <input />
+      removeEmptyAttributes: true, //删除所有空格作属性值 <input id="" /> ==> <input />
+      removeScriptTypeAttributes: true, //删除<script>的type="text/javascript"
+      removeStyleLinkTypeAttributes: true, //删除<style>和<link>的type="text/css"
+      minifyJS: true, //压缩页面JS
+      minifyCSS: true, //压缩页面CSS
+    }))
+    .pipe(gulp.dest('./dist'));
+});
+
+// Watch
+gulp.task('watch', function () {
+  gulp.watch(path.sass, ['sass']);
+  gulp.watch(path.css, ['styles']);
+  gulp.watch(path.js, ['scripts']);
+  gulp.watch(path.images, ['images']);
+  gulp.watch(path.html, ['html']);
+});
+
+// Dev
+gulp.task('dev', ['sass', 'styles', 'scripts', 'images', 'html']);
+
+// Serve
+gulp.task('serve', ['watch'], function () {
+  connect.server({
+    root: 'dist',
+    livereload: true
+  });
+});
+
+// Default task
+gulp.task('default', ['sass:build', 'styles:build', 'scripts:build', 'images:build', 'html:build']);
