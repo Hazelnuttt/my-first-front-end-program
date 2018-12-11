@@ -1,7 +1,2 @@
-.DS_Store
-Thumbs.db
-db.json
-*.log
+.sass-cache/
 node_modules/
-
-.deploy*/
