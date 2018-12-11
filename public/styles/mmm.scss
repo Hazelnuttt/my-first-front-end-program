@@ -1,0 +1,21 @@
+$nav-color:#f90;
+nav{
+    $width:100px;
+    width:$width;
+    color:$nav-color;
+}
+$highlight-color:#f90;
+.selected{
+    border:1px solid $highlight-color;
+}
+
+$primary-color:#1269b5;
+div.box{
+  background-color:$primary-color;
+}
+
+h1.page-header{
+  border:1px solid $primary-color
+}
+
+
