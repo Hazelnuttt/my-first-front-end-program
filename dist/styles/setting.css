@@ -1,0 +1,40 @@
+
+.start{
+  padding: 40px 15px;
+  text-align: center;
+}
+
+
+.onepage{
+  height: 750px;
+}
+.onepage-bg{
+ height: 800px;
+  width: 100%;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+#onepagebg{
+  background-image: url(../images/bg1.jpg)
+}
+
+
+.twopage-bg{
+  width:100%;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+#twopagebg{
+  background-image: url(../images/bg2.jpg)
+}
+
+
+.threepage-bg{
+  width: 100%;
+  background-size: 100% 100%;
+}
+#threepagebg{
+  background-image: url(../images/bg3.jpg)
+}
+
+
