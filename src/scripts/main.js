@@ -1,3 +1,3 @@
 
- document.getElementById("sc").innerHTML="爽歪歪.."
+ document.getElementById("box").innerHTML="爽歪歪.."
 
