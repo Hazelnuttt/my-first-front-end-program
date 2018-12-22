@@ -71,14 +71,14 @@ gulp.task('styles:build', function () {
 // Scripts
 gulp.task('scripts', function () {
   return gulp.src(path.js)
-    .pipe(concat('main.js'))
+    // .pipe(concat('main.js'))
     .pipe(gulp.dest('./dist/scripts'))
     .pipe(connect.reload());
 });
 
 gulp.task('scripts:build', function () {
   return gulp.src(path.js)
-    .pipe(concat('main.js'))
+    // .pipe(concat('main.js'))
     .pipe(uglify())
     .pipe(rename({
       suffix: '.min'

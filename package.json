@@ -12,7 +12,7 @@
     "dev": "gulp dev",
     "serve": "npm run dev && gulp serve",
     "prebuild": "npm run clean",
-    "build": "gulp"
+    "build": "gulp && gulp serve"
   },
   "author": "",
   "license": "ISC",
